@@ -1,0 +1,195 @@
+.bc_fed .fed_m_templates input,
+.bc_fed .fed_m_templates select{
+    background: transparent !important;
+    text-align: center;
+}
+.bc_fed .fed_inline {
+    display: inline;
+}
+.bc_fed .fed_mouser_pointer {
+    cursor: pointer;
+}
+.fed_m_membership_extra_container.padd_top_20 {
+    padding: 2px;
+    background: #033333;
+}
+.fed_m_hover.fed_m_user_role {
+    border-bottom: 2px solid #0AAAAA;
+    padding-bottom: 10px;
+}
+.bc_fed .template1 .pricingTable .form-control{
+    color: #ffffff !important;
+    border: none;
+    box-shadow: none;
+}
+
+.bc_fed .template1 .pricing-content .form-control{
+    color: #033333 !important;
+    border: none;
+    box-shadow: none;
+}
+
+
+.bc_fed .template1 .form-control::placeholder{ /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #ff5555 !important;
+    opacity: 1; /* Firefox */
+}
+
+.bc_fed .template1 .form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #FF5555 !important;
+}
+
+.bc_fed .template1 .form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: #FF5555 !important;
+}
+
+.bc_fed .template1 .pricingTable{
+    border: 2px solid #e3e3e3;
+    text-align: center;
+    position: relative;
+    padding-bottom: 40px;
+    transform: translateZ(0px);
+}
+.bc_fed .template1 .pricingTable:before,
+.bc_fed .template1 .pricingTable:after{
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    bottom: -2px;
+    right: -2px;
+    z-index: -1;
+    transition: all 0.5s ease 0s;
+}
+.bc_fed .template1 .pricingTable:before{
+    border-right: 2px solid #0AAAAA;
+    border-left: 2px solid #0AAAAA;
+    transform: scaleY(0);
+    transform-origin: 100% 0 0;
+}
+.bc_fed .template1 .pricingTable:after{
+    border-bottom: 2px solid #0AAAAA;
+    border-top: 2px solid #0AAAAA;
+    transform: scaleX(0);
+    transform-origin: 0 100% 0;
+}
+.bc_fed #fed_membership{
+    font-size: 24px;
+    padding: 5px 24px;
+}
+
+.bc_fed .template1, .bc_fed .template1 .fed_m_content_container {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+    margin: 20px;
+}
+.bc_fed .template1 .pricingTable, .bc_fed .template1 .fed_m_content_container .fed_m_template {
+    width: 300px;
+    margin: 0 10px;
+}
+.bc_fed .template1 .pricingTable:hover:before{
+    transform: scaleY(1);
+}
+.bc_fed .template1 .pricingTable:hover:after{
+    transform: scaleX(1);
+}
+.bc_fed .template1 .pricingTable .pricingTable-header{
+    background: #0AAAAA !important;
+    color: #fff !important;
+    margin: -2px -2px 35px !important;
+    padding: 40px 0 !important;
+}
+.bc_fed .template1 .pricingTable .heading{
+    font-size: 30px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+.bc_fed .template1 .pricingTable .sub_title{
+    font-size: 14px !important;
+    display: block !important;
+    padding-bottom: 30px;
+}
+.bc_fed .template1 .pricingTable .price_value{
+    font-size: 72px;
+    font-weight: 600;
+    margin-top: 10px;
+    position: relative;
+    display: inline-block;
+}
+.bc_fed .template1 .pricingTable .currency{
+    font-size: 45px;
+    font-weight: normal;
+    position: absolute;
+    top: 2px;
+    left: -30px;
+}
+.bc_fed .template1 .pricingTable .month{
+    font-size: 20px;
+    position: absolute;
+    bottom: 17px;
+    right: -40px;
+}
+.bc_fed .template1 .pricingTable .pricing-content{
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+.bc_fed .template1 .pricingTable .pricing-content li{
+    font-size: 16px;
+    color: #7a7e82;
+    line-height: 40px;
+}
+.bc_fed .template1 .pricingTable .read{
+    display: inline-block;
+    border: 2px solid #7a7e82;
+    border-right: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #7a7e82;
+    padding: 9px 30px;
+    position: relative;
+    text-transform: uppercase;
+    transition: all 0.3s ease 0s;
+}
+.bc_fed .template1 .pricingTable .read:hover{
+    border-color: #0AAAAA;
+    color: #0AAAAA;
+}
+.bc_fed .template1 .pricingTable .read svg{
+    font-size: 19px;
+    margin-top: -10px;
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transition: all 0.3s ease 0s;
+}
+.bc_fed .template1 .pricingTable .read:hover svg{
+    right: 5px;
+}
+.bc_fed .template1 .pricingTable .read:before,
+.bc_fed .template1 .pricingTable .read:after{
+    content: "";
+    display: block;
+    height: 32px;
+    border-left: 2px solid #7a7e82;
+    position: absolute;
+    right: -12px;
+    transition: all 0.3s ease 0s;
+}
+.bc_fed .template1 .pricingTable .read:before{
+    bottom: -6px;
+    transform: rotate(45deg);
+}
+.bc_fed .template1 .pricingTable .read:after{
+    top: -6px;
+    transform: rotate(-45deg);
+}
+.bc_fed .template1 .pricingTable .read:hover:before,
+.bc_fed .template1 .pricingTable .read:hover:after{
+    border-left-color: #0AAAAA;
+}
+@media screen and (max-width: 990px){
+    .bc_fed .template1 .pricingTable{ margin-bottom: 25px; }
+}

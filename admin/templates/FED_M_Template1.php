@@ -814,15 +814,16 @@ class FED_M_Template1 extends FED_M_Templates
                                     <li <?php echo $this->get_style($content); ?>><?php echo $content['title'] ?></li>
                                 <?php } ?>
                             </ul>
+
                             <div <?php echo $this->get_style($template['footer']); ?>>
-                                <a href="<?php echo isset($template['extra']['url']) && ! empty($template['extra']['url']) ? $template['extra']['url'] : '' ?>"
-                                   class="read" <?php echo $this->get_style($template['footer']['content']); ?>>
+                                <div data-url="<?php echo isset($template['extra']['url']) && ! empty($template['extra']['url']) ? $template['extra']['url'] : '' ?>"
+                                   class="fed_m_membership_button read" <?php echo $this->get_style($template['footer']['content']); ?>>
 
                                     <?php echo $template['footer']['content']['title'] ?>
                                     <span>
                                     <i class="fa fa-angle-right"></i>
                                         </span>
-                                </a>
+                                </div>
                             </div>
                         </div>
                     </div>

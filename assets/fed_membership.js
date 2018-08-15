@@ -21,9 +21,9 @@ jQuery(document).ready(function ($) {
     });
     body.on('click', '.fed_m_remove_content', function (e) {
         var click = $(this);
-        if (click.closest('.fed_data_url_container').find('.fed_m_single_pricing_container').length <= 1){
+        if (click.closest('.fed_data_url_container').find('.fed_m_single_pricing_container').length <= 1) {
             swal({'title': 'Sorry you need at least one to add', 'type': 'warning'});
-        }else {
+        } else {
             click.closest('.fed_m_single_pricing_container').remove();
         }
 
@@ -58,6 +58,19 @@ jQuery(document).ready(function ($) {
             });
         }
         e.preventDefault();
+    });
+
+    body.on('click', '.fed_m_membership_button', function (e) {
+        var click = $(this);
+        $.fed_toggle_loader();
+        $.ajax({
+            type: 'POST',
+            url: click.data('url'),
+            success: function (results) {
+                $.fed_toggle_loader();
+                console.log(results);
+            }
+        });
     });
 
 

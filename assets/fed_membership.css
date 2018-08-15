@@ -86,8 +86,11 @@
     margin: 20px;
 }
 .bc_fed .template1 .pricingTable, .bc_fed .template1 .fed_m_content_container .fed_m_template {
-    width: 300px;
+    width: 280px;
     margin: 0 10px;
+}
+.bc_fed .fed_m_membership_button {
+    cursor: pointer;
 }
 .bc_fed .template1 .pricingTable:hover:before{
     transform: scaleY(1);

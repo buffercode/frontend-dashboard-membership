@@ -185,7 +185,7 @@ class FED_M_Templates
                                     'size'  => isset($content['extra']['border']['size']) && null !== $content['extra']['border']['size'] ? fed_sanitize_text_field($content['extra']['border']['size']) : null,
                                     'type'  => isset($content['extra']['border']['type']) && null !== $content['extra']['border']['type'] ? fed_sanitize_text_field($content['extra']['border']['type']) : null,
                             ),
-                            'url'    => admin_url('admin-ajax.php?action=fed_m_payment_redirect&type='.$type.'&id='.$url_id.'&fed_nonce='.wp_create_nonce('fed_nonce')),
+                            'url'    => admin_url('admin-ajax.php?action=fed_m_payment_redirect&type='.$type.'&id='.$url_id),
                     ),
                     'payments'   => array(
                             'type'                    => $type,

@@ -61,13 +61,18 @@ class FED_M_Membership
         $sub_total       = 0;
         $item_lists      = unserialize($details['item_lists']);
         $amount          = unserialize($details['amount']);
+
         foreach ($item_lists as $index => $lists) {
 
-            $random        = fed_get_random_string(5);
-            $quantity      = isset($lists['quantity']) ? (float)fed_sanitize_text_field($lists['quantity']) : 0;
-            $price         = isset($lists['price']) ? (float)fed_sanitize_text_field($lists['price']) : 0;
-            $item_tax      = isset($lists['tax']) ? (float)fed_sanitize_text_field($lists['tax']) : 0;
-            $item_tax_type = isset($lists['tax_type']) ? fed_sanitize_text_field($lists['tax_type']) : 'fixed';
+            $random         = fed_get_random_string(5);
+            $quantity       = isset($lists['quantity']) ? (float)fed_sanitize_text_field($lists['quantity']) : 0;
+            $price          = isset($lists['price']) ? (float)fed_sanitize_text_field($lists['price']) : 0;
+            $item_tax       = isset($lists['tax']) ? (float)fed_sanitize_text_field($lists['tax']) : 0;
+            $item_tax_type  = isset($lists['tax_type']) ? fed_sanitize_text_field($lists['tax_type']) : 'fixed';
+            $price_quantity = (float)$quantity * $price;
+            $item_tax_value = $this->get_tax($item_tax_type, $price_quantity, $item_tax);
+            $price_value    = $price_quantity + $item_tax_value;
+            $sub_total      = $sub_total + $price_value;
 
             $item_list[$index] = array(
                     'name'        => isset($lists['name']) ? fed_sanitize_text_field($lists['name']) : 'NO_NAME_GIVEN',
@@ -76,36 +81,36 @@ class FED_M_Membership
                     'quantity'    => $quantity,
                     'url'         => isset($lists['url']) ? fed_sanitize_text_field($lists['url']) : null,
                     'sku'         => isset($lists['sku']) ? fed_sanitize_text_field($lists['sku']) : null,
-                    'price'       => $price,
-                    'tax'         => $item_tax,
+                    'price'       => $price_value,
+                    'tax'         => $item_tax_value,
             );
 
-            $sub_total_array[$random]['quantity_price'] = (float)$quantity * $price;
-            $sub_total                                  = $sub_total + (float)$quantity * $price;
 
-            $sub_total_array[$random]['tax'] = $this->get_tax($item_tax_type, ($quantity * $price), $item_tax);
-            $sub_total                       = $sub_total + $this->get_tax($item_tax_type, ($quantity * $price),
-                            $item_tax);
+//            $sub_total_array[$random] = $price_quantity + $item_tax_value;
+//            $sub_total_array[$random]['tax'] = $item_tax_value;
+//            $sub_total_array[$random]['total'] = $price_quantity;
         }
 
-        $shipping_discount      = isset($amount['details']['shipping_discount']) ? (float)fed_sanitize_text_field($amount['details']['shipping_discount']) : 0;
-        $shipping_discount_type = isset($amount['details']['shipping_discount_type']) ? fed_sanitize_text_field($amount['details']['shipping_discount_type']) : 'fixed';
+//        bcdump($sub_total_array);
 
-        $insurance      = isset($amount['details']['insurance']) ? (float)fed_sanitize_text_field($amount['details']['insurance']) : 0;
-        $insurance_type = isset($amount['details']['insurance_type']) ? fed_sanitize_text_field($amount['details']['insurance_type']) : 'fixed';
+        $shipping_discount       = isset($amount['details']['shipping_discount']) ? (float)fed_sanitize_text_field($amount['details']['shipping_discount']) : 0;
+        $shipping_discount_type  = isset($amount['details']['shipping_discount_type']) ? fed_sanitize_text_field($amount['details']['shipping_discount_type']) : 'fixed';
+        $shipping_discount_value = $this->get_tax($shipping_discount_type, $sub_total, $shipping_discount);
 
-        $tax      = isset($amount['details']['tax']) ? (float)fed_sanitize_text_field($amount['details']['tax']) : 0;
-        $tax_type = isset($amount['details']['tax_type']) ? fed_sanitize_text_field($amount['details']['tax_type']) : 'fixed';
+        $insurance       = isset($amount['details']['insurance']) ? (float)fed_sanitize_text_field($amount['details']['insurance']) : 0;
+        $insurance_type  = isset($amount['details']['insurance_type']) ? fed_sanitize_text_field($amount['details']['insurance_type']) : 'fixed';
+        $insurance_value = $this->get_tax($insurance_type, $sub_total, $insurance);
+
+        $tax       = isset($amount['details']['tax']) ? (float)($amount['details']['tax']) : 0;
+        $tax_type  = isset($amount['details']['tax_type']) ? fed_sanitize_text_field($amount['details']['tax_type']) : 'fixed';
+        $tax_value = (float)$this->get_tax($tax_type, $sub_total, $tax);
 
 
-        $gift_wrap    = isset($amount['details']['gift_wrap']) ? fed_sanitize_text_field($amount['details']['gift_wrap']) : 0;
-        $shipping     = isset($amount['details']['shipping']) ? fed_sanitize_text_field($amount['details']['shipping']) : 0;
-        $handling_fee = isset($amount['details']['handling_fee']) ? fed_sanitize_text_field($amount['details']['handling_fee']) : 0;
+        $gift_wrap    = isset($amount['details']['gift_wrap']) ? (float)($amount['details']['gift_wrap']) : 0;
+        $shipping     = isset($amount['details']['shipping']) ? (float)($amount['details']['shipping']) : 0;
+        $handling_fee = isset($amount['details']['handling_fee']) ? (float)($amount['details']['handling_fee']) : 0;
 
-
-        $total = $sub_total + $this->get_tax($tax_type, $sub_total, $tax) + $this->get_tax($insurance_type, $sub_total,
-                        $insurance) + $this->get_tax($shipping_discount_type, $sub_total,
-                        $shipping_discount) + $gift_wrap + $shipping + $handling_fee;
+        $total = $sub_total + $shipping + $tax_value + $handling_fee - $shipping_discount_value + $insurance_value  + $gift_wrap ;
 
         $paypal = array(
                 'payments' => array(
@@ -117,12 +122,12 @@ class FED_M_Membership
                                                 'currency' => isset($amount['currency']) ? fed_sanitize_text_field($amount['currency']) : 'USD',
                                                 'total'    => $total,
                                                 'details'  => array(
-                                                        'shipping'          => $shipping,
-                                                        'tax'               => $tax,
                                                         'sub_total'         => $sub_total,
+                                                        'shipping'          => $shipping,
+                                                        'tax'               => $tax_value,
                                                         'handling_fee'      => $handling_fee,
-                                                        'shipping_discount' => $shipping_discount,
-                                                        'insurance'         => $insurance,
+                                                        'shipping_discount' => $shipping_discount_value,
+                                                        'insurance'         => $insurance_value,
                                                         'gift_wrap'         => $gift_wrap,
                                                 ),
                                         ),
@@ -151,14 +156,14 @@ class FED_M_Membership
     {
         $tax_value = 0;
         if ($type === 'percentage') {
-            $tax_value = (float)($total * $tax) / 100;
+            return (float)($total * $tax) / 100;
         }
 
         if ($type === 'fixed') {
-            $tax_value = $tax;
+            return $tax;
         }
 
-        return $tax_value;
+        return (int)$tax_value;
     }
 }
 

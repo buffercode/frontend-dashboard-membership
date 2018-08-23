@@ -2,6 +2,7 @@
 
 namespace FED_Membership;
 
+use FED_Log;
 use FED_PayPal;
 
 /**
@@ -17,7 +18,28 @@ class FED_M_Membership
                 $this,
                 'start_payment',
         ));
+        add_action('template_redirect', array($this, 'paypal_success'));
 
+
+    }
+
+    /**
+     * PayPal Request Process.
+     * TODO: PayPal
+     */
+    public function paypal_success()
+    {
+//        if (isset($_REQUEST['fed_paypal'], $_REQUEST['fed_display_user_not_paid'])) {
+//            if ( ! wp_verify_nonce($_REQUEST['fed_display_user_not_paid'], 'fed_display_user_not_paid')) {
+//                wp_die('Something Went Wrong, Please go back and refresh the page.');
+//            }
+//            $paypal = new paypal_payment();
+//            $paypal->process_paypal();
+//        }
+        if (isset($_REQUEST['paymentId'], $_REQUEST['PayerID'])) {
+            $paypal = new FED_PayPal\FED_PayPal();
+            $paypal->payment_success($_REQUEST);
+        }
     }
 
     public function start_payment()
@@ -33,10 +55,18 @@ class FED_M_Membership
 
 
         //Check the payment type
-        if ($payment_type === 'one_time') {
+        if ($payment_type === 'single') {
             $paypal          = new FED_PayPal\FED_PayPal();
             $details         = fed_fetch_table_row_by_id(BC_FED_PAY_PAYMENT_PLAN_TABLE, (int)$plan_id);
-            $payment_details = $this->format_payment($details);
+//            FED_Log::writeLog($details);
+            $payment_details = $this->format_payment(
+                    $details,
+                    array(
+                            'plan_type' => $details['plan_type'],
+                            'plan_id'   => $details['gDlbYZlb1zk9'],
+                            'plan_name' => $details['plan_name'],
+                    )
+            );
             $status          = $paypal->payment_start($payment_details);
         }
 
@@ -50,11 +80,13 @@ class FED_M_Membership
     }
 
     /**
-     * @param $details
+     * @param       $details
+     *
+     * @param array $extra
      *
      * @return array
      */
-    private function format_payment($details)
+    private function format_payment($details, $extra = null)
     {
         $paypal          = $item_list = array();
         $sub_total_array = array();
@@ -110,7 +142,7 @@ class FED_M_Membership
         $shipping     = isset($amount['details']['shipping']) ? (float)($amount['details']['shipping']) : 0;
         $handling_fee = isset($amount['details']['handling_fee']) ? (float)($amount['details']['handling_fee']) : 0;
 
-        $total = $sub_total + $shipping + $tax_value + $handling_fee - $shipping_discount_value + $insurance_value  + $gift_wrap ;
+        $total = $sub_total + $shipping + $tax_value + $handling_fee - $shipping_discount_value + $insurance_value + $gift_wrap;
 
         $paypal = array(
                 'payments' => array(
@@ -136,6 +168,7 @@ class FED_M_Membership
                                         'reference_id'   => isset($details['reference_id']) ? fed_sanitize_text_field($details['reference_id']) : '',
                                         'note_to_payee'  => isset($details['note_to_payee']) ? fed_sanitize_text_field($details['note_to_payee']) : '',
                                         'purchase_order' => isset($details['purchase_order']) ? fed_sanitize_text_field($details['purchase_order']) : '',
+                                        'custom'         => $extra !== null ? $extra : null,
                                 ),
                         ),
                 ),

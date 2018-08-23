@@ -3,6 +3,8 @@
 namespace FED_Membership;
 
 
+use FED_PayPal\FED_PayPal;
+
 /**
  * Class FED_M_Menu
  *
@@ -83,6 +85,9 @@ class FED_M_Menu
 
     public function fed_membership_menu()
     {
+//        $paypal = new FED_PayPal();
+//        $i = $paypal->get_payment_by_id('PAY-5MS68422P2668760PLN7FTGY');
+//        bcdump($i);
         $request = $_REQUEST;
         ?>
         <div class="bc_fed container">
@@ -172,6 +177,7 @@ class FED_M_Menu
      */
     public function admin_membership_menu($fed_admin_options)
     {
+
         $tabs = $this->fed_m_admin_menu_options($fed_admin_options);
         fed_common_layouts_admin_settings($fed_admin_options, $tabs);
     }

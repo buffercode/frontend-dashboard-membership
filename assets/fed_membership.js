@@ -68,7 +68,9 @@ jQuery(document).ready(function ($) {
             url: click.data('url'),
             success: function (results) {
                 $.fed_toggle_loader();
-                window.location.replace(results.data.url);
+                if (results.data.url.length > 0) {
+                    window.location.replace(results.data.url);
+                }
             }
         });
     });

@@ -123,7 +123,7 @@ class FED_M_Templates
 
             $type_value_one_time = isset($content['payments']['type_value_one_time']) && null !== $content['payments']['type_value_one_time'] ? fed_sanitize_text_field($content['payments']['type_value_one_time']) : null;
 
-            if($type === 'one_time'){
+            if($type === 'single'){
                 $url_id = $type_value_one_time;
             }
 

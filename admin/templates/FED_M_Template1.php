@@ -182,7 +182,7 @@ class FED_M_Template1 extends FED_M_Templates
             $border_type = isset($template['extra']['border']['type']) && null !== $template['extra']['border']['type'] ? $template['extra']['border']['type'] : 'solid';
             $border      = $border_size.' '.$border_type.' '.$color;
 
-            $payment_type_one = isset($template['payments']['type']) && $template['payments']['type'] === 'one_time' ? 'checked' : '';
+            $payment_type_one = isset($template['payments']['type']) && $template['payments']['type'] === 'single' ? 'checked' : '';
             $payment_type_sub = isset($template['payments']['type']) && $template['payments']['type'] === 'subscription' ? 'checked' : '';
 
 
@@ -278,7 +278,7 @@ class FED_M_Template1 extends FED_M_Templates
                                 <div class="checkbox fed_m_hover fed_one_time_payment">
                                     <label>
                                         <input type="radio" name="Template1['.$random.'][payments][type]"
-                                               value="one_time" '.$payment_type_one.' />
+                                               value="single" '.$payment_type_one.' />
                                         One Time
                                     </label>
                                     '.fed_get_input_details(array(
@@ -501,7 +501,7 @@ class FED_M_Template1 extends FED_M_Templates
             $border_type = isset($template['extra']['border']['type']) && null !== $template['extra']['border']['type'] ? $template['extra']['border']['type'] : 'solid';
             $border      = $border_size.' '.$border_type.' '.$color;
 
-            $payment_type_one = isset($template['payments']['type']) && $template['payments']['type'] === 'one_time' ? 'checked' : '';
+            $payment_type_one = isset($template['payments']['type']) && $template['payments']['type'] === 'single' ? 'checked' : '';
             $payment_type_sub = isset($template['payments']['type']) && $template['payments']['type'] === 'subscription' ? 'checked' : '';
 
 
@@ -597,7 +597,7 @@ class FED_M_Template1 extends FED_M_Templates
                                 <div class="checkbox fed_m_hover fed_one_time_payment">
                                     <label>
                                         <input type="radio" name="Template1['.$random.'][payments][type]"
-                                               value="one_time" '.$payment_type_one.' />
+                                               value="single" '.$payment_type_one.' />
                                         One Time
                                     </label>
                                     '.fed_get_input_details(array(

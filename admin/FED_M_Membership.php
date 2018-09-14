@@ -2,6 +2,7 @@
 
 namespace FED_Membership;
 
+use Exception;
 use FED_Log;
 use FED_PayPal;
 
@@ -40,8 +41,16 @@ class FED_M_Membership
             $paypal = new FED_PayPal\FED_PayPal();
             $paypal->payment_success($_REQUEST);
         }
+
+        if (isset($_REQUEST['token'], $_REQUEST['fed_m_subscription'], $_REQUEST['plan_id']) && ! empty($_REQUEST['token'])) {
+            $paypal = new FED_PayPal\FED_PayPal();
+            $paypal->billing_agreement_success();
+        }
     }
 
+    /**
+     * @return bool
+     */
     public function start_payment()
     {
         $request = $_REQUEST;
@@ -56,24 +65,36 @@ class FED_M_Membership
 
         //Check the payment type
         if ($payment_type === 'single') {
-            $paypal          = new FED_PayPal\FED_PayPal();
-            $details         = fed_fetch_table_row_by_id(BC_FED_PAY_PAYMENT_PLAN_TABLE, (int)$plan_id);
+            $paypal  = new FED_PayPal\FED_PayPal();
+            $details = fed_fetch_table_row_by_id(BC_FED_PAY_PAYMENT_PLAN_TABLE, (int)$plan_id);
 //            FED_Log::writeLog($details);
+
+            if ( ! $details) {
+                FED_Log::writeLog($details, 'ERROR');
+                wp_die('You are trying with Plan ID, which does not exist');
+            }
             $payment_details = $this->format_payment(
                     $details,
                     array(
                             'plan_type' => $details['plan_type'],
-                            'plan_id'   => $details['gDlbYZlb1zk9'],
+                            'plan_id'   => $details['plan_id'],
                             'plan_name' => $details['plan_name'],
                     )
             );
-            $status          = $paypal->payment_start($payment_details);
+
+            return $paypal->payment_start($payment_details);
         }
 
         if ($payment_type === 'subscription') {
-            $plan  = new FED_PayPal\FED_PayPal();
-            $table = $plan->get_plan_by_id($plan_id);
-            bcdump($table);
+            $plan         = new FED_PayPal\FED_PayPal();
+            $plan_details = $plan->get_plan_by_id($plan_id);
+            try {
+                $plan->create_active_billing_agreement($plan_details);
+            } catch (Exception $e) {
+                FED_Log::writeLog($e);
+            }
+
+
         }
 
 
@@ -117,13 +138,7 @@ class FED_M_Membership
                     'tax'         => $item_tax_value,
             );
 
-
-//            $sub_total_array[$random] = $price_quantity + $item_tax_value;
-//            $sub_total_array[$random]['tax'] = $item_tax_value;
-//            $sub_total_array[$random]['total'] = $price_quantity;
         }
-
-//        bcdump($sub_total_array);
 
         $shipping_discount       = isset($amount['details']['shipping_discount']) ? (float)fed_sanitize_text_field($amount['details']['shipping_discount']) : 0;
         $shipping_discount_type  = isset($amount['details']['shipping_discount_type']) ? fed_sanitize_text_field($amount['details']['shipping_discount_type']) : 'fixed';

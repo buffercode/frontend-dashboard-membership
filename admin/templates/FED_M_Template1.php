@@ -485,6 +485,7 @@ class FED_M_Template1 extends FED_M_Templates
         $templates            = $this->get_template_values();
         $subscription_payment = fed_m_get_subscription_payment();
 //        var_dump($this->settings );
+//        var_dump($templates);
         foreach ($templates as $template) {
             $random            = fed_get_random_string(5);
             $color             = '#0AAAAA';
@@ -746,6 +747,7 @@ class FED_M_Template1 extends FED_M_Templates
         $color             = '#0AAAAA';
         $border_color      = '#0AAAAA';
         $border_left_color = '#0AAAAA';
+        $current_user_role = fed_get_current_user_role_key();
         if (isset($this->template['extra']['border']['color']) && null !== $this->template['extra']['border']['color']) {
             $color             = $this->template['extra']['border']['color'];
             $border_color      = 'border-color:'.$this->template['extra']['border']['color'].';';
@@ -817,14 +819,23 @@ class FED_M_Template1 extends FED_M_Templates
 
                             <div <?php echo $this->get_style($template['footer']); ?>>
                                 <div data-url="<?php echo isset($template['extra']['url']) && ! empty($template['extra']['url']) ? $template['extra']['url'] : '' ?>"
-                                   class="fed_m_membership_button read" <?php echo $this->get_style($template['footer']['content']); ?>>
+                                     class="fed_m_membership_button read" <?php echo $this->get_style($template['footer']['content']); ?>>
 
-                                    <?php echo $template['footer']['content']['title'] ?>
+                                    <?php if ($template['payments']['roles'] === $current_user_role) { ?>
+                                        Purchased
+<!--                                        You have already --><?php //echo $template['footer']['content']['title'];
+
+                                        ?>
+                                    <?php } else {
+                                        echo $template['footer']['content']['title'];
+                                    } ?>
                                     <span>
                                     <i class="fa fa-angle-right"></i>
                                         </span>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 <?php } ?>

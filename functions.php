@@ -8,7 +8,7 @@ function fed_m_get_one_time_payment()
 {
     $plans = fed_fetch_table_rows_by_key_value(BC_FED_PAY_PAYMENT_PLAN_TABLE, 'status', 'ACTIVE');
 
-    $value = fed_get_key_value_array($plans, 'id', 'plan_name');
+    $value = fed_get_key_value_array($plans, 'plan_id', 'plan_name');
     if(count($value) <= 0){
         return array(''=>'Please Add New One Time Payment');
     }

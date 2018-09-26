@@ -5,6 +5,7 @@ namespace FED_Membership;
 use Exception;
 use FED_Log;
 use FED_PayPal;
+use WP_User;
 
 /**
  * Class FED_M_Membership
@@ -20,8 +21,44 @@ class FED_M_Membership
                 'start_payment',
         ));
         add_action('template_redirect', array($this, 'paypal_success'));
+        add_action('fed_paypal_single_after_save_action', array($this, 'update_user_role'), 10, 2);
+        add_action('fed_paypal_subscription_after_save_action', array($this, 'update_user_role'), 10, 2);
 
+    }
 
+    /**
+     * @param $data
+     * @param $status
+     */
+    public function update_user_role($data, $status)
+    {
+        $options  = get_option('fed_m_templates');
+        $template = 'Template1';
+//        FED_Log::writeLog($options);
+//        FED_Log::writeLog(gettype($options));
+//        FED_Log::writeLog((isset($options['template'][$template]['value'])));
+//        FED_Log::writeLog($options['template'][$template]['value']);
+        if ($options && is_array($options) && isset($options['template'][$template]['value'])) {
+//            FED_Log::writeLog('in before foreach');
+            foreach ($options['template'][$template]['value'] as $option) {
+                $plan_id = $option['payments']['type'] === 'single' ? $option['payments']['type_value_one_time'] : $option['payments']['type_value_subscription'];
+//                FED_Log::writeLog('Loop');
+//                FED_Log::writeLog($option['payments']['type_value_one_time']);
+//                FED_Log::writeLog($option['payments']['type_value_subscription']);
+//                FED_Log::writeLog($data['plan_id']);
+//                FED_Log::writeLog($option['payments']['roles']);
+                if ($plan_id === $data['plan_id']) {
+                    //FED_Log::writeLog(array('role' => $option['payments']['roles'], 'id' => $data['user_id']));
+                    $user = new WP_User($data['user_id']); //123 is the user ID
+                    $user->set_role($option['payments']['roles']);
+                    break;
+                    //$user->roles; // ["subscriber"]
+//                    FED_Log::writeLog('New Role');
+//                    FED_Log::writeLog(array('role' => $user->roles, 'id' => $data['user_id']));
+                }
+            }
+        }
+        FED_Log::writeLog('out');
     }
 
     /**
@@ -30,13 +67,6 @@ class FED_M_Membership
      */
     public function paypal_success()
     {
-//        if (isset($_REQUEST['fed_paypal'], $_REQUEST['fed_display_user_not_paid'])) {
-//            if ( ! wp_verify_nonce($_REQUEST['fed_display_user_not_paid'], 'fed_display_user_not_paid')) {
-//                wp_die('Something Went Wrong, Please go back and refresh the page.');
-//            }
-//            $paypal = new paypal_payment();
-//            $paypal->process_paypal();
-//        }
         if (isset($_REQUEST['paymentId'], $_REQUEST['PayerID'])) {
             $paypal = new FED_PayPal\FED_PayPal();
             $paypal->payment_success($_REQUEST);
@@ -45,6 +75,12 @@ class FED_M_Membership
         if (isset($_REQUEST['token'], $_REQUEST['fed_m_subscription'], $_REQUEST['plan_id']) && ! empty($_REQUEST['token'])) {
             $paypal = new FED_PayPal\FED_PayPal();
             $paypal->billing_agreement_success();
+        }
+
+        if (isset($_REQUEST) && isset($_REQUEST['fed_m_payment_status']) && $_REQUEST['fed_m_payment_status'] === 'success') {
+            FED_Log::writeLog('Success in Template redirect');
+            fed_set_alert('fed_dashboard_top_message', apply_filters('fed_single_payment_success_message',
+                    __('Payment Received Successfully', 'frontend-dashboard-membership')));
         }
     }
 
@@ -66,13 +102,13 @@ class FED_M_Membership
         //Check the payment type
         if ($payment_type === 'single') {
             $paypal  = new FED_PayPal\FED_PayPal();
-            $details = fed_fetch_table_row_by_id(BC_FED_PAY_PAYMENT_PLAN_TABLE, (int)$plan_id);
-//            FED_Log::writeLog($details);
+            $details = fed_fetch_table_rows_by_key_value(BC_FED_PAY_PAYMENT_PLAN_TABLE, 'plan_id', $plan_id);
 
-            if ( ! $details) {
+            if ( ! $details || count($details) < 1) {
                 FED_Log::writeLog($details, 'ERROR');
                 wp_die('You are trying with Plan ID, which does not exist');
             }
+            $details         = $details[0];
             $payment_details = $this->format_payment(
                     $details,
                     array(
@@ -153,11 +189,11 @@ class FED_M_Membership
         $tax_value = (float)$this->get_tax($tax_type, $sub_total, $tax);
 
 
-        $gift_wrap    = isset($amount['details']['gift_wrap']) ? (float)($amount['details']['gift_wrap']) : 0;
+//        $gift_wrap    = isset($amount['details']['gift_wrap']) ? (float)($amount['details']['gift_wrap']) : 0;
         $shipping     = isset($amount['details']['shipping']) ? (float)($amount['details']['shipping']) : 0;
         $handling_fee = isset($amount['details']['handling_fee']) ? (float)($amount['details']['handling_fee']) : 0;
 
-        $total = $sub_total + $shipping + $tax_value + $handling_fee - $shipping_discount_value + $insurance_value + $gift_wrap;
+        $total = $sub_total + $shipping + $tax_value + $handling_fee - $shipping_discount_value + $insurance_value;// + $gift_wrap;
 
         $paypal = array(
                 'payments' => array(
@@ -175,7 +211,7 @@ class FED_M_Membership
                                                         'handling_fee'      => $handling_fee,
                                                         'shipping_discount' => $shipping_discount_value,
                                                         'insurance'         => $insurance_value,
-                                                        'gift_wrap'         => $gift_wrap,
+//                                                        'gift_wrap'         => $gift_wrap,
                                                 ),
                                         ),
                                         'description'    => isset($details['description']) ? fed_sanitize_text_field($details['description']) : '',

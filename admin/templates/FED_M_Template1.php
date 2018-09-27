@@ -822,10 +822,12 @@ class FED_M_Template1 extends FED_M_Templates
                                      class="fed_m_membership_button read" <?php echo $this->get_style($template['footer']['content']); ?>>
 
                                     <?php if ($template['payments']['roles'] === $current_user_role) { ?>
-                                        Purchased
-<!--                                        You have already --><?php //echo $template['footer']['content']['title'];
-
-                                        ?>
+                                        <div class="fed_red_color">
+                                            <?php
+                                            echo __('Purchased', 'frontend-dashboard-membership');
+                                            //                                        echo __('You have <br>'). __('already <br>'). $template['footer']['content']['title'] . __('<br>this plan');
+                                            ?>
+                                        </div>
                                     <?php } else {
                                         echo $template['footer']['content']['title'];
                                     } ?>

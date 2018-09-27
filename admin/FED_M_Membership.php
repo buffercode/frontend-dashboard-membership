@@ -57,6 +57,8 @@ class FED_M_Membership
 //                    FED_Log::writeLog(array('role' => $user->roles, 'id' => $data['user_id']));
                 }
             }
+            fed_set_alert('fed_dashboard_top_message', apply_filters('fed_single_payment_success_message',
+                    __('Payment Received Successfully', 'frontend-dashboard-membership')));
         }
         FED_Log::writeLog('out');
     }
@@ -78,9 +80,8 @@ class FED_M_Membership
         }
 
         if (isset($_REQUEST) && isset($_REQUEST['fed_m_payment_status']) && $_REQUEST['fed_m_payment_status'] === 'success') {
-            FED_Log::writeLog('Success in Template redirect');
-            fed_set_alert('fed_dashboard_top_message', apply_filters('fed_single_payment_success_message',
-                    __('Payment Received Successfully', 'frontend-dashboard-membership')));
+//            fed_set_alert('fed_dashboard_top_message', apply_filters('fed_single_payment_success_message',
+//                    __('Payment Received Successfully', 'frontend-dashboard-membership')));
         }
     }
 

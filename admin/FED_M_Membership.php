@@ -69,17 +69,18 @@ class FED_M_Membership
      */
     public function paypal_success()
     {
-        if (isset($_REQUEST['paymentId'], $_REQUEST['PayerID'])) {
+        $request = fed_sanitize_text_field($_REQUEST);
+        if (isset($request['paymentId'], $request['PayerID'])) {
             $paypal = new FED_PayPal\FED_PayPal();
-            $paypal->payment_success($_REQUEST);
+            $paypal->payment_success($request);
         }
 
-        if (isset($_REQUEST['token'], $_REQUEST['fed_m_subscription'], $_REQUEST['plan_id']) && ! empty($_REQUEST['token'])) {
+        if (isset($request['token'], $request['fed_m_subscription'], $request['plan_id']) && ! empty($request['token'])) {
             $paypal = new FED_PayPal\FED_PayPal();
             $paypal->billing_agreement_success();
         }
 
-        if (isset($_REQUEST) && isset($_REQUEST['fed_m_payment_status']) && $_REQUEST['fed_m_payment_status'] === 'success') {
+        if (isset($request) && isset($request['fed_m_payment_status']) && $request['fed_m_payment_status'] === 'success') {
 //            fed_set_alert('fed_dashboard_top_message', apply_filters('fed_single_payment_success_message',
 //                    __('Payment Received Successfully', 'frontend-dashboard-membership')));
         }
@@ -90,7 +91,7 @@ class FED_M_Membership
      */
     public function start_payment()
     {
-        $request = $_REQUEST;
+        $request = fed_sanitize_text_field($_REQUEST);
 
         if ( ! isset($request['type'], $request['id'])) {
             wp_die('Something went wrong, please reload the page and try');

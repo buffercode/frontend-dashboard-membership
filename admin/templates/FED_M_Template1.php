@@ -131,16 +131,17 @@ class FED_M_Template1 extends FED_M_Templates
 
     public function add_template_content()
     {
+        $request = fed_sanitize_text_field($_REQUEST);
         $html   = '';
         $random = fed_get_random_string(4);
-        if ( ! isset($_REQUEST['random_key']) || empty($_REQUEST['random_key'])) {
+        if ( ! isset($request['random_key']) || empty($request['random_key'])) {
             wp_send_json_error(array('message' => 'Something went wrong, please reload the page and try'));
         }
 
         $html .= '<li class="fed_m_single_pricing_container fed_m_hover">
                                 <div class="fed_flex_start_center">
                                     <div><input type="text" class="form-control"
-                                                name="Template1['.$_REQUEST['random_key'].'][body][content]['.$random.'][title]"
+                                                name="Template1['.$request['random_key'].'][body][content]['.$random.'][title]"
                                                 value="" placeholder="Text"/></div>
                                     <div class="fed_mouser_pointer">
                                         <i class="fa fa-plus fed_m_add_content" aria-hidden="true"></i>

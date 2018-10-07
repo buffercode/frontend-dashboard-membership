@@ -88,7 +88,7 @@ class FED_M_Menu
 //        $paypal = new FED_PayPal();
 //        $i = $paypal->get_payment_by_id('PAY-5MS68422P2668760PLN7FTGY');
 //        bcdump($i);
-        $request = $_REQUEST;
+        $request = fed_sanitize_text_field($_REQUEST);
         ?>
         <div class="bc_fed container">
             <div class="bc_fed_wrapper padd_top_20">

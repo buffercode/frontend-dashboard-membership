@@ -112,7 +112,7 @@ class FED_M_Templates
      */
     public function save_membership()
     {
-        $request = $_REQUEST;
+        $request = fed_sanitize_text_field($_REQUEST);
         fed_verify_nonce($request);
         $value         = array();
         $template_name = isset($this->settings['selected_template']) ? $this->settings['selected_template'] : 'Template1';
